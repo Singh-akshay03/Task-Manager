@@ -46,4 +46,14 @@ public class TaskService {
         }
         return  task;
     }
+
+    public String deleteTask(Long id){
+        for (Task task: tasks) {
+            if(task.getId().equals(id)){
+                tasks.remove(task);
+                return "Task Deleted";
+            }
+        }
+        return "No such task with id "+Long.toString(id)+" found";
+    }
 }

@@ -6,9 +6,6 @@ import com.taskmanager.dtos.CreateTaskDTO;
 import com.taskmanager.dtos.UpdateTaskDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,7 +27,7 @@ public class TasksController {
         return ResponseEntity.ok(task1);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/task/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable("id") Long id){
         Task task=taskService.getTaskById(id);
         return ResponseEntity.ok(task);
@@ -39,5 +36,9 @@ public class TasksController {
     public ResponseEntity<Task> UpdateTask(@RequestBody UpdateTaskDto updateTaskDto){
         Task task=taskService.updateTask(updateTaskDto);
         return ResponseEntity.ok(task);
+    }
+    @DeleteMapping("/task/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable Long id){
+        return ResponseEntity.ok(taskService.deleteTask(id));
     }
 }
