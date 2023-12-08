@@ -1,33 +1,43 @@
 package com.taskmanager.Controllers;
 
 import com.taskmanager.Models.Task;
+import com.taskmanager.Services.TaskService.TaskService;
+import com.taskmanager.dtos.CreateTaskDTO;
+import com.taskmanager.dtos.UpdateTaskDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 
 public class TasksController {
-
-    List<Task> tasks=new ArrayList<>();
+    private TaskService taskService;
+    public TasksController(TaskService taskService){
+        this.taskService=taskService;
+    }
 
     @GetMapping("/tasks")
-    public List<Task> getAllTasks(){
-        return  tasks;
+    public ResponseEntity<List<Task>> getAllTasks(){
+        List<Task> tasks=taskService.getAllTask();
+        return ResponseEntity.ok(tasks);
     }
     @PostMapping("/add-task")
-    public Task createTask(@RequestBody Task task){
-        tasks.add(task);
-        return task;
+    public ResponseEntity<Task> createTask(@RequestBody CreateTaskDTO createTaskDTO){
+        Task task1=taskService.createTask(createTaskDTO);
+        return ResponseEntity.ok(task1);
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable("id") Long id){
-        Task foundTask= (Task) tasks.stream().filter(task -> task.getId().equals(id));
-//        if(foundTask==null){
-//
-//        }
-        return foundTask;
+    public ResponseEntity<Task> getTaskById(@PathVariable("id") Long id){
+        Task task=taskService.getTaskById(id);
+        return ResponseEntity.ok(task);
+    }
+    @PatchMapping("/update-task")
+    public ResponseEntity<Task> UpdateTask(@RequestBody UpdateTaskDto updateTaskDto){
+        Task task=taskService.updateTask(updateTaskDto);
+        return ResponseEntity.ok(task);
     }
 }
