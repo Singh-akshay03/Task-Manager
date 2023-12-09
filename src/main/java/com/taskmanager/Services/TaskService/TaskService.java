@@ -5,6 +5,7 @@ import com.taskmanager.Models.TaskStatus;
 import com.taskmanager.dtos.CreateTaskDTO;
 import com.taskmanager.dtos.UpdateTaskDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +27,19 @@ public class TaskService {
         }
         return null;
     }
+    public Task findTaskById(Long id){
+        Task foundTask= null;
+        for (Task task: tasks) {
+            if(task.getId().equals(id)){
+                foundTask=task;
+                break;
+            }
+        }
+        if (foundTask==null){
+            handleException(new Exception("Task not found"));
+        }
+        return foundTask;
+    }
     public Task createTask(CreateTaskDTO createTaskDTO){
         Task task=new Task(id++,
                 createTaskDTO.getName(),
@@ -37,7 +51,10 @@ public class TaskService {
         return task;
     }
     public Task updateTask(UpdateTaskDto updateTaskDto){
-        Task task= (Task) tasks.stream().filter(task1 -> task1.getId().equals(updateTaskDto.getId()));
+        Task task= findTaskById(updateTaskDto.getId());
+        if(task==null){
+            return null;
+        }
         if(updateTaskDto.getDescription()!=null){
             task.setTaskDescription(updateTaskDto.getDescription());
         }
@@ -47,13 +64,18 @@ public class TaskService {
         return  task;
     }
 
-    public String deleteTask(Long id){
-        for (Task task: tasks) {
-            if(task.getId().equals(id)){
-                tasks.remove(task);
-                return "Task Deleted";
-            }
-        }
-        return "No such task with id "+Long.toString(id)+" found";
+    public boolean deleteTask(Long id){
+       Task task=findTaskById(id);
+       if(task!=null){
+           tasks.remove(task);
+           return true;
+       }
+        return false;
     }
+
+    @ExceptionHandler(Exception.class)
+    public void handleException(Exception e){
+        throw new RuntimeException(e);
+    }
+    //TODO:- handle the errors in all the functions properly the null check and the http correct responses.
 }

@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
 public class TasksController {
-    private TaskService taskService;
+    private final TaskService taskService;
     public TasksController(TaskService taskService){
         this.taskService=taskService;
     }
@@ -38,7 +37,7 @@ public class TasksController {
         return ResponseEntity.ok(task);
     }
     @DeleteMapping("/task/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable Long id){
+    public ResponseEntity<Boolean> deleteTask(@PathVariable Long id){
         return ResponseEntity.ok(taskService.deleteTask(id));
     }
 }
